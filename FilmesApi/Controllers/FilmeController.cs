@@ -1,6 +1,7 @@
 ﻿using FilmesApi.Services;
 using FilmesAPI.Data.Dtos;
 using FluentResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -18,12 +19,14 @@ namespace FilmesAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult AdicionaFilme([FromBody] CreateFilmeDto filmeDto)
         {
             ReadFilmeDto readDto = _filmeService.AdicionaFilme(filmeDto);
             return CreatedAtAction(nameof(RecuperaFilmesPorId), new { Id = readDto.Id }, readDto);
         }
 
+        [Authorize(Roles = "admin, regular", Policy = "IdadeMinina")]
         [HttpGet]
         public IActionResult RecuperaFilmes([FromQuery] int? classificacaoEtaria = null)
         {

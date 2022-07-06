@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using UsuariosApi.Data;
+using UsuariosApi.Models;
 using UsuariosApi.Services;
 
 namespace UsuariosApi
@@ -23,20 +24,21 @@ namespace UsuariosApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<UserDbContext>(options =>
-                options.UseMySQL(Configuration.GetConnectionString("UsuarioConnection"))
-            );
-            services.AddIdentity<IdentityUser<int>, IdentityRole<int>>(
-                opt => opt.SignIn.RequireConfirmedEmail = true
-                )
+            services.AddDbContext<UserDbContext>(options => options.UseMySQL(Configuration.GetConnectionString("UsuarioConnection")));
+            services
+                .AddIdentity<CustomIdentityUser, IdentityRole<int>>(opt =>
+                {
+                    opt.SignIn.RequireConfirmedEmail = true;
+                })
                 .AddEntityFrameworkStores<UserDbContext>()
                 .AddDefaultTokenProviders();
-            services.AddScoped<LogoutService, LogoutService>();
+            services.AddControllers();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddScoped<EmailService, EmailService>();
             services.AddScoped<CadastroService, CadastroService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<LoginService, LoginService>();
-            services.AddControllers();
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddScoped<LogoutService, LogoutService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

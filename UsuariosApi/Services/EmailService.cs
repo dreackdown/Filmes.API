@@ -1,7 +1,6 @@
 ﻿using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
-using System;
 using UsuariosApi.Models;
 
 namespace UsuariosApi.Services
